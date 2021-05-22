@@ -1,12 +1,14 @@
 // @ts-nocheck
 
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
+    "sap/ui/core/mvc/Controller",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
 ],
 	/**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller) {
+    function (Controller, Filter, FilterOperator) {
         "use strict";
 
         function myCheck(){
@@ -24,9 +26,38 @@ sap.ui.define([
         }
 
         return Controller.extend("logaligroup.Employees.controller.MainView", {
-            onInit: function () {
 
+            onInit: function () {
+                var oJSONModel = new sap.ui.model.json.JSONModel();
+                var oView = this.getView();
+                var i18nBundle = oView.getModel("i18n").getResourceBundle();
+
+                oJSONModel.loadData("./localService/mockdata/Employees.json");
+
+                oView.setModel(oJSONModel);
+            },            
+            
+            onValidate: myCheck,
+            onFilter: function(){
+                var oJSON = this.getView().getModel().getData();
+
+                var filters = [];
+
+                if(oJSON.EmployeeId !== ""){
+                    filters.push(new Filter("EmployeeID", FilterOperator.EQ, oJSON.EmployeeId ));
+                }
+                if(oJSON.CountryKey !== ""){
+                    filters.push(new Filter("Country", FilterOperator.EQ, oJSON.CountryKey ));
+                }
+
+                var oList = this.getView().byId("tableEmployee");
+                var oBinding = oList.getBinding("items");
+                oBinding.filter(filters);
             },
-            onValidate: myCheck
+            onClearFilter: function(){
+                var oModel = this.getView().getModel();
+                oModel.setProperty("/EmployeeId","");
+                oModel.setProperty("/CountryKey","");
+            }
         });
     });
