@@ -25,31 +25,46 @@ sap.ui.define([
                 this.byId("labelCountry").setVisible(false);
                 this.byId("slCountry").setVisible(false);                
             };
-        }
+        };
 
         return Controller.extend("logaligroup.Employees.controller.MainView", {
 
             onInit: function () {
-                var oJSONModel = new sap.ui.model.json.JSONModel();
+                
                 var oView = this.getView();
-                var i18nBundle = oView.getModel("i18n").getResourceBundle();
+                //var i18nBundle = oView.getModel("i18n").getResourceBundle();
 
-                oJSONModel.loadData("./localService/mockdata/Employees.json");
+                var oJSONModelEmpl = new sap.ui.model.json.JSONModel();
+                oJSONModelEmpl.loadData("./localService/mockdata/Employees.json");
+                oView.setModel(oJSONModelEmpl, "jsonEmployees");
 
-                oView.setModel(oJSONModel);
+                var oJSONModelCountries = new sap.ui.model.json.JSONModel();
+                oJSONModelCountries.loadData("./localService/mockdata/Countries.json");
+                oView.setModel(oJSONModelCountries, "jsonCountries");     
+                
+                var oJSONModelConfig = new sap.ui.model.json.JSONModel({
+                    visibleID: true,
+                    vibileName: true,
+                    visibleCountry: true,
+                    visibleCity: false,
+                    visibleBtnShowCity: true,
+                    visibleBtnHideCity: false
+                });
+
+                oView.setModel(oJSONModelConfig, "jsonConfig");
             },            
             
             onValidate: myCheck,
             onFilter: function(){
-                var oJSON = this.getView().getModel().getData();
+                var oJSONCountries = this.getView().getModel("jsonCountries").getData();
 
                 var filters = [];
 
-                if(oJSON.EmployeeId !== ""){
-                    filters.push(new Filter("EmployeeID", FilterOperator.EQ, oJSON.EmployeeId ));
+                if(oJSONCountries.EmployeeId !== ""){
+                    filters.push(new Filter("EmployeeID", FilterOperator.EQ, oJSONCountries.EmployeeId ));
                 }
-                if(oJSON.CountryKey !== ""){
-                    filters.push(new Filter("Country", FilterOperator.EQ, oJSON.CountryKey ));
+                if(oJSONCountries.CountryKey !== ""){
+                    filters.push(new Filter("Country", FilterOperator.EQ, oJSONCountries.CountryKey ));
                 }
 
                 var oList = this.getView().byId("tableEmployee");
@@ -57,15 +72,27 @@ sap.ui.define([
                 oBinding.filter(filters);
             },
             onClearFilter: function(){
-                var oModel = this.getView().getModel();
+                var oModel = this.getView().getModel("jsonCountries");
                 oModel.setProperty("/EmployeeId","");
                 oModel.setProperty("/CountryKey","");
             },
             showPostalCode: function(oEvent){
                 var itemPressed = oEvent.getSource();
-                var oContext = itemPressed.getBindingContext();
+                var oContext = itemPressed.getBindingContext("jsonEmployees");
                 var objectContext = oContext.getObject();
                 sap.m.MessageToast.show(objectContext.PostalCode);
+            },
+            onShowCity: function(){
+                var oJSONModelConfig = this.getView().getModel("jsonConfig");
+                oJSONModelConfig.setProperty("/visibleCity", true);
+                oJSONModelConfig.setProperty("/visibleBtnShowCity", false);
+                oJSONModelConfig.setProperty("/visibleBtnHideCity", true);
+            },
+            onHideCity: function(){
+                var oJSONModelConfig = this.getView().getModel("jsonConfig");
+                oJSONModelConfig.setProperty("/visibleCity", false);
+                oJSONModelConfig.setProperty("/visibleBtnShowCity", true);
+                oJSONModelConfig.setProperty("/visibleBtnHideCity", false);
             }
         });
     });
