@@ -95,36 +95,18 @@ sap.ui.define([
                 oJSONModelConfig.setProperty("/visibleBtnHideCity", false);
             },
             showOrders: function (oEvent) {
-                var ordersTable = this.getView().byId("ordersTable");
-                ordersTable.destroyItems(); //Por si se presiona n veces
+                var iconPressed = oEvent.getSource();
+                var oContext = iconPressed.getBindingContext("jsonEmployees");
 
-                var itemPressed = oEvent.getSource();
-                var oContext = itemPressed.getBindingContext("jsonEmployees");
-                var objectContext = oContext.getObject();
-                var orders = objectContext.Orders;
-
-                var ordersItems = [];
-
-                for (var i in orders) {
-                    ordersItems.push(new sap.m.ColumnListItem( {
-                        cells : [
-                        new sap.m.Label({ text: orders[i].OrderID }),
-                        new sap.m.Label({ text: orders[i].Freight }),
-                        new sap.m.Label({ text: orders[i].ShipAddress })
-                    ]}))
-                }
-
-                var newTable = new sap.m.Table({
-                    width: "auto",
-                    columns: [
-                        new sap.m.Column({ header: new sap.m.Label({ text: "{i18n>orderID}" }) }),
-                        new sap.m.Column({ header: new sap.m.Label({ text: "{i18n>freight}" }) }),
-                        new sap.m.Column({ header: new sap.m.Label({ text: "{i18n>shipAddress}" }) })
-                    ],
-                    items: ordersItems
-                }).addStyleClass("sapUiSmallMargin");
-
-                ordersTable.addItem(newTable);
+                if (!this._oDialogOrders) {
+                    this._oDialogOrders = sap.ui.xmlfragment("logaligroup.Employees.fragment.DialogOrders", this);
+                    this.getView().addDependent(this._oDialogOrders);
+                };
+                this._oDialogOrders.bindElement("jsonEmployees>" + oContext.getPath());
+                this._oDialogOrders.open();
+            },
+            onCloseOrders: function () {
+                this._oDialogOrders.close();
             }
-        });
+        })
     });
