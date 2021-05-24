@@ -29,9 +29,9 @@
                     </ColumnListItem>
                 </items>
             </Table>            
-            <endButton>
-                <Button text="{i18n>Close}" press="onCloseOrders"/>
-            </endButton>
         </content>
+        <endButton>
+            <Button text="{i18n>Close}" press="onCloseOrders"/>
+        </endButton>        
     </Dialog>
 </core:FragmentDefinition>

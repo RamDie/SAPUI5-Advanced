@@ -27,31 +27,10 @@ sap.ui.define([
             };
         };
 
-        return Controller.extend("logaligroup.Employees.controller.MainView", {
+        return Controller.extend("logaligroup.Employees.controller.MasterEmployee", {
 
             onInit: function () {
-
-                var oView = this.getView();
-                //var i18nBundle = oView.getModel("i18n").getResourceBundle();
-
-                var oJSONModelEmpl = new sap.ui.model.json.JSONModel();
-                oJSONModelEmpl.loadData("./localService/mockdata/Employees.json");
-                oView.setModel(oJSONModelEmpl, "jsonEmployees");
-
-                var oJSONModelCountries = new sap.ui.model.json.JSONModel();
-                oJSONModelCountries.loadData("./localService/mockdata/Countries.json");
-                oView.setModel(oJSONModelCountries, "jsonCountries");
-
-                var oJSONModelConfig = new sap.ui.model.json.JSONModel({
-                    visibleID: true,
-                    vibileName: true,
-                    visibleCountry: true,
-                    visibleCity: false,
-                    visibleBtnShowCity: true,
-                    visibleBtnHideCity: false
-                });
-
-                oView.setModel(oJSONModelConfig, "jsonConfig");
+                this._bus = sap.ui.getCore().getEventBus();
             },
 
             onValidate: myCheck,
@@ -107,6 +86,10 @@ sap.ui.define([
             },
             onCloseOrders: function () {
                 this._oDialogOrders.close();
+            },
+            showEmployee: function(oEvent){
+                var path = oEvent.getSource().getBindingContext("jsonEmployees").getPath();
+                this._bus.publish("flexible", "showEmployee", path);
             }
         })
     });
