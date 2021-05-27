@@ -13,7 +13,7 @@ sap.ui.define([
     function (Controller, Filter, FilterOperator) {
         "use strict";
 
-        function myCheck() {
+        /*function myCheck() {
             var inputEmployee = this.byId("inputEmployee");
             var valueEmployee = inputEmployee.getValue();
 
@@ -25,7 +25,7 @@ sap.ui.define([
                 this.byId("labelCountry").setVisible(false);
                 this.byId("slCountry").setVisible(false);
             };
-        };
+        };*/
 
         return Controller.extend("logaligroup.Employees.controller.MasterEmployee", {
 
@@ -33,7 +33,7 @@ sap.ui.define([
                 this._bus = sap.ui.getCore().getEventBus();
             },
 
-            onValidate: myCheck,
+            //onValidate: myCheck,
             onFilter: function () {
                 var oJSONCountries = this.getView().getModel("jsonCountries").getData();
 
@@ -90,6 +90,12 @@ sap.ui.define([
             showEmployee: function(oEvent){
                 var path = oEvent.getSource().getBindingContext("odataNorthwind").getPath();
                 this._bus.publish("flexible", "showEmployee", path);
+            },
+            toOrderDetails: function(oEvent){
+                var orderID = oEvent.getSource().getBindingContext("odataNorthwind").getObject().OrderID;
+                
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                oRouter.navTo("RouterOrderDetails",{OrderID : orderID });
             }
         })
     });
