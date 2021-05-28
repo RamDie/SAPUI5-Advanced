@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "logaligroup/Employees/controller/Base.controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator"
 ],
@@ -10,7 +10,7 @@ sap.ui.define([
      * @param {typeof sap.ui.model.Filter} Filter
      * @param {typeof sap.ui.model.FilterOperator} FilterOperator
      */
-    function (Controller, Filter, FilterOperator) {
+    function (Base, Filter, FilterOperator) {
         "use strict";
 
         /*function myCheck() {
@@ -27,7 +27,7 @@ sap.ui.define([
             };
         };*/
 
-        return Controller.extend("logaligroup.Employees.controller.MasterEmployee", {
+        return Base.extend("logaligroup.Employees.controller.MasterEmployee", {
 
             onInit: function () {
                 this._bus = sap.ui.getCore().getEventBus();
@@ -90,12 +90,6 @@ sap.ui.define([
             showEmployee: function(oEvent){
                 var path = oEvent.getSource().getBindingContext("odataNorthwind").getPath();
                 this._bus.publish("flexible", "showEmployee", path);
-            },
-            toOrderDetails: function(oEvent){
-                var orderID = oEvent.getSource().getBindingContext("odataNorthwind").getObject().OrderID;
-                
-                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                oRouter.navTo("RouterOrderDetails",{OrderID : orderID });
             }
         })
     });
